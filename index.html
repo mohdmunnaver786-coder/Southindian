@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Octopus — Prediction Channel</title>
+  <meta
+    name="description"
+    content="Join Octopus on Telegram for prediction updates, insights and notifications."
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #05030b;
+      --card: rgba(255, 255, 255, 0.055);
+      --border: rgba(255, 255, 255, 0.1);
+      --purple: #9b5cff;
+      --blue: #4c8dff;
+      --text: #fff;
+      --muted: #aaa7b8;
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% 0%, #25104d 0%, transparent 35%),
+        radial-gradient(circle at 10% 80%, #111b43 0%, transparent 30%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Background glow */
+    .glow {
+      position: fixed;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: .18;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .glow.one {
+      background: #9b5cff;
+      top: 10%;
+      left: -150px;
+    }
+
+    .glow.two {
+      background: #287cff;
+      right: -150px;
+      bottom: 10%;
+    }
+
+    nav {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 25px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      box-shadow: 0 0 25px rgba(155, 92, 255, .4);
+      font-size: 22px;
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      color: white;
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-size: 14px;
+      transition: .3s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(155,92,255,.7);
+    }
+
+    /* Hero */
+    .hero {
+      width: min(1000px, 92%);
+      margin: 70px auto 0;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid rgba(155, 92, 255, .3);
+      background: rgba(155, 92, 255, .08);
+      border-radius: 50px;
+      color: #d5baff;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    .badge span {
+      width: 7px;
+      height: 7px;
+      background: #55ff9a;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #55ff9a;
+    }
+
+    h1 {
+      font-size: clamp(55px, 10vw, 110px);
+      line-height: .9;
+      letter-spacing: -5px;
+      font-weight: 900;
+      background: linear-gradient(
+        90deg,
+        #fff,
+        #caa7ff 45%,
+        #72a7ff
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      max-width: 650px;
+      margin: 30px auto 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .cta {
+      margin-top: 35px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .telegram-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: white;
+      padding: 16px 28px;
+      border-radius: 14px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #8f4dff, #3e82ff);
+      box-shadow: 0 15px 40px rgba(92, 71, 255, .3);
+      transition: .3s;
+    }
+
+    .telegram-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px rgba(92, 71, 255, .45);
+    }
+
+    .telegram-icon {
+      font-size: 20px;
+    }
+
+    /* Octopus visual */
+    .octopus {
+      width: 210px;
+      height: 210px;
+      margin: 65px auto 70px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 35% 30%, #d0aaff, #8d4df4 35%, #25104b 75%);
+      box-shadow:
+        0 0 50px rgba(143, 77, 244, .35),
+        inset 0 0 40px rgba(255,255,255,.12);
+      font-size: 105px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* Stats */
+    .stats {
+      width: min(900px, 92%);
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .stat {
+      padding: 25px 15px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      backdrop-filter: blur(15px);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 27px;
+      margin-bottom: 7px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* Features */
+    .section {
+      width: min(1000px, 92%);
+      margin: 110px auto 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-heading h2 {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .feature {
+      padding: 30px;
+      border-radius: 22px;
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.07),
+        rgba(255,255,255,.025)
+      );
+      border: 1px solid var(--border);
+      transition: .3s;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+      border-color: rgba(155,92,255,.5);
+    }
+
+    .feature-icon {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(155,92,255,.12);
+      font-size: 23px;
+      margin-bottom: 20px;
+    }
+
+    .feature h3 {
+      margin-bottom: 10px;
+      font-size: 19px;
+    }
+
+    .feature p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* How it works */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .step {
+      text-align: center;
+      padding: 25px;
+    }
+
+    .number {
+      width: 45px;
+      height: 45px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      font-weight: 800;
+    }
+
+    .step h3 {
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* CTA Box */
+    .final-cta {
+      width: min(900px, 92%);
+      margin: 110px auto;
+      padding: 65px 30px;
+      text-align: center;
+      border-radius: 30px;
+      border: 1px solid rgba(155,92,255,.25);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(155,92,255,.18), transparent 60%),
+        rgba(255,255,255,.035);
+    }
+
+    .final-cta h2 {
+      font-size: clamp(30px, 5vw, 50px);
+      margin-bottom: 15px;
+    }
+
+    .final-cta p {
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      border-top: 1px solid var(--border);
+      color: #777487;
+      font-size: 13px;
+    }
+
+    /* Mobile */
+    @media (max-width: 700px) {
+      nav {
+        padding-top: 18px;
+      }
+
+      .nav-btn {
+        display: none;
+      }
+
+      .hero {
+        margin-top: 55px;
+      }
+
+      h1 {
+        letter-spacing: -3px;
+      }
+
+      .subtitle {
+        font-size: 15px;
+      }
+
+      .octopus {
+        width: 160px;
+        height: 160px;
+        font-size: 75px;
+        margin: 50px auto;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .features,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        margin-top: 80px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">🐙</div>
+      OCTOPUS
+    </div>
+
+    <a
+      class="nav-btn"
+      href="YOUR_TELEGRAM_LINK"
+      target="_blank"
+      rel="noopener"
+    >
+      Join Telegram
+    </a>
+  </nav>
+
+  <!-- Hero -->
+  <main>
+    <section class="hero">
+
+      <div class="badge">
+        <span></span>
+        Telegram Prediction Channel
+      </div>
+
+      <h1>OCTOPUS</h1>
+
+      <p class="subtitle">
+        Predictions, updates and insights — all in one place.
+        Join the Octopus Telegram channel and stay updated with the latest posts.
+      </p>
+
+      <div class="cta">
+        <a
+          class="telegram-btn"
+          href="YOUR_TELEGRAM_LINK"
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="telegram-icon">✈</span>
+          JOIN TELEGRAM
+        </a>
+      </div>
+
+      <div class="octopus">
+        🐙
+      </div>
+
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+
+      <div class="stat">
+        <strong>⚡</strong>
+        <span>Fast Updates</span>
+      </div>
+
+      <div class="stat">
+        <strong>📊</strong>
+        <span>Daily Predictions</span>
+      </div>
+
+      <div class="stat">
+        <strong>🔔</strong>
+        <span>Instant Alerts</span>
+      </div>
+
+      <div class="stat">
+        <strong>🌐</strong>
+        <span>Active Community</span>
+      </div>
+
+    </section>
+
+    <!-- Features -->
+    <section class="section">
+
+      <div class="section-heading">
+        <h2>Why OCTOPUS?</h2>
+        <p>Everything you need, directly on Telegram.</p>
+      </div>
+
+      <div class="features">
+
+        <div class="feature">
+          <div class="feature-icon">🎯</div>
+          <h3>Prediction Updates</h3>
+          <p>
+            Get prediction posts and channel updates directly through Telegram.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <h3>Quick Notifications</h3>
+          <p>
+            Stay updated when new posts and important channel updates are published.
+          </p>
+        </div>
+
+        <div class="feature">
+          <div class="feature-icon">🔐</div>
+          <h3>Simple & Direct</h3>
+          <p>
+            One channel, one place, and easy access to all the latest updates.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- How it works -->
+    <section class="section">
+
+      <div class="section-heading">
+        <h2>How It Works</h2>
+        <p>Join Octopus in three simple steps.</p>
+      </div>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="number">01</div>
+          <h3>Join</h3>
+          <p>
+            Click the Telegram button and join the Octopus channel.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="number">02</div>
+          <h3>Follow</h3>
+          <p>
+            Turn on notifications so you don't miss new channel posts.
+          </p>
+        </div>
+
+        <div class="step">
+          <div class="number">03</div>
+          <h3>Stay Updated</h3>
+          <p>
+            Follow the latest predictions and information posted in the channel.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Final CTA -->
+    <section class="final-cta">
+
+      <h2>Join OCTOPUS 🐙</h2>
+
+      <p>
+        Get the latest prediction updates directly on Telegram.
+      </p>
+
+      <a
+        class="telegram-btn"
+        href="https://t.me/+YPGUNZl08xYyODM1"
+        target="_blank"
+        rel="noopener"
+      >
+        ✈ JOIN TELEGRAM CHANNEL
+      </a>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 OCTOPUS. All rights reserved.
+  </footer>
+
+</body>
+</html>
